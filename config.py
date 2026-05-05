@@ -11,7 +11,7 @@ GREEN_API_TOKEN = os.getenv("GREEN_API_TOKEN")
 # Настройки Supabase
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") 
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Инициализация TaskIQ (Redis)
 # Берем URL из переменных (для Upstash это rediss://...), если нет — локальный redis
