@@ -2,7 +2,8 @@ import httpx
 import logging
 from config import GEMINI_API_KEY
 
-BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
+# Изменено на v1 для поддержки стабильных моделей эмбеддингов
+BASE_URL = "https://generativelanguage.googleapis.com/v1"
 
 def format_model_name(name: str) -> str:
     """Гарантирует, что имя модели начинается с 'models/' без дублей."""
