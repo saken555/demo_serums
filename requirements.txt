@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+taskiq
+taskiq-redis
+redis
+supabase
+httpx
+python-dotenv
+pydantic-settings
