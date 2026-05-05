@@ -13,18 +13,18 @@ def format_model_name(name: str) -> str:
     return f"models/{name}"
 
 async def get_embedding(text: str, model_name: str) -> list:
-    """Генерация эмбеддинга для RAG-поиска с учетом специфики v2."""
+    """Генерация эмбеддинга с обрезкой до 768 (Matryoshka)."""
     full_model_name = format_model_name(model_name)
     url = f"{BASE_URL}/{full_model_name}:embedContent?key={GEMINI_API_KEY}"
     
-    # КРИТИЧНО ДЛЯ gemini-embedding-2: 
-    # Добавляем префикс для поискового запроса прямо в текст
-    query_text = f"task: search result | query: {text}"
+    # Для поискового запроса используем более точный префикс
+    query_text = f"task: search query | query: {text}"
     
     payload = {
         "model": full_model_name,
-        "content": {"parts": [{"text": query_text}]}
-        # task_type не используем, так как он запрещен для v2
+        "content": {"parts": [{"text": query_text}]},
+        # КРИТИЧЕСКИЙ ПАРАМЕТР: заставляем API вернуть 768 измерений
+        "output_dimensionality": 768 
     }
     
     async with httpx.AsyncClient() as client:
@@ -33,6 +33,8 @@ async def get_embedding(text: str, model_name: str) -> list:
             logging.error(f"Embedding Error: {response.status_code} - {response.text}")
             response.raise_for_status()
         return response.json()['embedding']['values']
+
+
 
 async def generate_answer(prompt: str, history: list, model: str) -> str:
     """Одиночный запрос к Gemini."""
