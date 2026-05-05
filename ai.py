@@ -2,8 +2,8 @@ import httpx
 import logging
 from config import GEMINI_API_KEY
 
-# Изменено на v1 для поддержки стабильных моделей эмбеддингов
-BASE_URL = "https://generativelanguage.googleapis.com/v1"
+# Для gemini-embedding-2 обязательно используем v1beta
+BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
 
 def format_model_name(name: str) -> str:
     """Гарантирует, что имя модели начинается с 'models/' без дублей."""
@@ -17,10 +17,10 @@ async def get_embedding(text: str, model_name: str) -> list:
     full_model_name = format_model_name(model_name)
     url = f"{BASE_URL}/{full_model_name}:embedContent?key={GEMINI_API_KEY}"
     
+    # ВНИМАНИЕ: Для gemini-embedding-2 параметр task_type НЕ поддерживается
     payload = {
         "model": full_model_name,
-        "content": {"parts": [{"text": text}]},
-        "task_type": "retrieval_query"
+        "content": {"parts": [{"text": text}]}
     }
     
     async with httpx.AsyncClient() as client:
