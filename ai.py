@@ -2,7 +2,7 @@ import httpx
 import logging
 from config import GEMINI_API_KEY
 
-# Для gemini-embedding-2 обязательно используем v1beta
+# ВНИМАНИЕ: Для модели gemini-embedding-2 обязательна версия v1beta
 BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
 
 def format_model_name(name: str) -> str:
@@ -17,7 +17,7 @@ async def get_embedding(text: str, model_name: str) -> list:
     full_model_name = format_model_name(model_name)
     url = f"{BASE_URL}/{full_model_name}:embedContent?key={GEMINI_API_KEY}"
     
-    # ВНИМАНИЕ: Для gemini-embedding-2 параметр task_type НЕ поддерживается
+    # Для моделей серии embedding-2 параметр task_type НЕ передается
     payload = {
         "model": full_model_name,
         "content": {"parts": [{"text": text}]}
