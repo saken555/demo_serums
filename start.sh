@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Запускаем воркер TaskIQ в фоновом режиме
-# Используем модуль tasks и объект broker внутри него
-taskiq worker tasks:broker --tasks tasks &
+# Запускаем ОДИН воркер (флаг -w 1)
+# --max-async-tasks 1 ограничивает параллелизм внутри воркера для экономии RAM
+taskiq worker tasks:broker --tasks tasks -w 1 --max-async-tasks 1 &
 
-# Запускаем основной сервер FastAPI
+# Запускаем FastAPI
 uvicorn main:app --host 0.0.0.0 --port $PORT
