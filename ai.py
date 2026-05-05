@@ -13,7 +13,6 @@ def format_model_name(name: str) -> str:
 
 async def get_embedding(text: str, model_name: str) -> list:
     """Генерация эмбеддинга для RAG-поиска."""
-    # Используем отформатированное имя
     full_model_name = format_model_name(model_name)
     url = f"{BASE_URL}/{full_model_name}:embedContent?key={GEMINI_API_KEY}"
     
@@ -27,7 +26,6 @@ async def get_embedding(text: str, model_name: str) -> list:
         response = await client.post(url, json=payload, timeout=10.0)
         if response.status_code != 200:
             logging.error(f"Embedding Error: {response.status_code} - {response.text}")
-            # Если 004 не доступна, попробуйте вернуть заглушку или упасть с описанием
             response.raise_for_status()
         return response.json()['embedding']['values']
 
@@ -62,3 +60,15 @@ async def generate_answer(prompt: str, history: list, model: str) -> str:
             return data['candidates'][0]['content']['parts'][0]['text']
         except (KeyError, IndexError):
             return None
+
+async def smart_generate(full_prompt: str, history: list, m1: str, m2: str) -> str:
+    """Логика Fallback: сначала m1, если ошибка — m2."""
+    # Попытка 1
+    result = await generate_answer(full_prompt, history, m1)
+    if result:
+        return result
+    
+    # Попытка 2 (Fallback)
+    logging.warning(f"Switching to fallback model: {m2}")
+    result = await generate_answer(full_prompt, history, m2)
+    return result
