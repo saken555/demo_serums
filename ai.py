@@ -13,14 +13,18 @@ def format_model_name(name: str) -> str:
     return f"models/{name}"
 
 async def get_embedding(text: str, model_name: str) -> list:
-    """Генерация эмбеддинга для RAG-поиска."""
+    """Генерация эмбеддинга для RAG-поиска с учетом специфики v2."""
     full_model_name = format_model_name(model_name)
     url = f"{BASE_URL}/{full_model_name}:embedContent?key={GEMINI_API_KEY}"
     
-    # Для моделей серии embedding-2 параметр task_type НЕ передается
+    # КРИТИЧНО ДЛЯ gemini-embedding-2: 
+    # Добавляем префикс для поискового запроса прямо в текст
+    query_text = f"task: search result | query: {text}"
+    
     payload = {
         "model": full_model_name,
-        "content": {"parts": [{"text": text}]}
+        "content": {"parts": [{"text": query_text}]}
+        # task_type не используем, так как он запрещен для v2
     }
     
     async with httpx.AsyncClient() as client:
