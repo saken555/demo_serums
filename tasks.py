@@ -27,7 +27,8 @@ async def process_ai_message(chat_id: str, user_text: str):
         # 3. RAG: Векторизация и поиск товаров
         embedding_model = params.get('embedding_model', 'models/text-embedding-004')
         
-        search_query = await condense_query(user_text, history)
+        
+        search_query = await condense_query(user_text, history, settings['model1'])
         user_vector = await get_embedding(search_query, embedding_model)
 
         products = await match_serums(
