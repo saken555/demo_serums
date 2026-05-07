@@ -33,7 +33,8 @@ async def condense_query(user_text: str, history: list) -> str:
     )
     
     # Используем generate_answer или прямой запрос к Flash
-    condensed = await generate_answer(prompt, [], "gemini-2.5-flash-lite")
+    condensed = await generate_answer(prompt, [], model)
+    
     return condensed if condensed else user_text
 
 
