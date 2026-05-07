@@ -2,7 +2,8 @@ import logging
 import httpx
 from config import broker, GREEN_API_ID, GREEN_API_TOKEN
 from db import get_settings, get_chat_history, save_message, match_serums
-from ai import get_embedding, smart_generate
+
+from ai import get_embedding, smart_generate, condense_query
 from utils import md_to_whatsapp, set_typing
 
 @broker.task
