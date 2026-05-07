@@ -12,6 +12,8 @@ async def process_ai_message(chat_id: str, user_text: str):
     try:
         # 1. Загружаем настройки из БД
         settings = await get_settings()
+        business_info = settings.get('business_info', 'Информация о магазине временно недоступна.')
+
         if not settings:
             logging.error("Settings not found in DB")
             return
@@ -47,9 +49,10 @@ async def process_ai_message(chat_id: str, user_text: str):
 
         # 5. Сборка промпта и генерация
         full_prompt = (
-            f"{settings['ai_prompt']}\n\n"
-            f"КОНТЕКСТ ИЗ БАЗЫ ДАННЫХ:\n{context_str}\n\n"
-            f"ВОПРОС ПОЛЬЗОВАТЕЛЯ: {user_text}"
+          f"{settings['ai_prompt']}\n\n"
+          f"ОБЩАЯ ИНФОРМАЦИЯ О МАГАЗИНЕ (адрес, доставка, режим):\n{business_info}\n\n"
+          f"КОНТЕКСТ ИЗ БАЗЫ ТОВАРОВ (если применимо):\n{context_str}\n\n"
+          f"ВОПРОС ПОЛЬЗОВАТЕЛЯ: {user_text}"
         )
 
         ai_response = await smart_generate(
