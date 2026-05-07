@@ -12,6 +12,31 @@ def format_model_name(name: str) -> str:
         return name
     return f"models/{name}"
 
+async def condense_query(user_text: str, history: list) -> str:
+    """Превращает уточняющий вопрос в полноценный поисковый запрос на основе истории."""
+    if not history:
+        return user_text
+        
+    history_str = ""
+    for msg in history[-3:]: # Берем только последние 3 сообщения для экономии
+        role = "Юзер" if msg['role'] == 'user' else "Бот"
+        history_str += f"{role}: {msg['content']}\n"
+        
+    prompt = (
+        f"Дан диалог между пользователем и ИИ-консультантом по косметике.\n"
+        f"История:\n{history_str}\n"
+        f"Новый вопрос: {user_text}\n\n"
+        f"Твоя задача: переформулируй новый вопрос в короткий поисковый запрос (2-5 слов), "
+        f"который можно использовать для поиска в базе данных. "
+        f"Если вопрос понятен без контекста, верни его без изменений. "
+        f"Ответь ТОЛЬКО текстом запроса."
+    )
+    
+    # Используем generate_answer или прямой запрос к Flash
+    condensed = await generate_answer(prompt, [], "gemini-2.5-flash-lite")
+    return condensed if condensed else user_text
+
+
 async def get_embedding(text: str, model_name: str) -> list:
     """Генерация эмбеддинга с обрезкой до 768 (Matryoshka)."""
     full_model_name = format_model_name(model_name)
