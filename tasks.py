@@ -25,8 +25,10 @@ async def process_ai_message(chat_id: str, user_text: str):
 
         # 3. RAG: Векторизация и поиск товаров
         embedding_model = params.get('embedding_model', 'models/text-embedding-004')
-        user_vector = await get_embedding(user_text, embedding_model)
         
+        search_query = await condense_query(user_text, history)
+        user_vector = await get_embedding(search_query, embedding_model)
+
         products = await match_serums(
             user_vector, 
             params.get('rag_threshold', 0.7), 
