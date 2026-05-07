@@ -12,7 +12,7 @@ def format_model_name(name: str) -> str:
         return name
     return f"models/{name}"
 
-async def condense_query(user_text: str, history: list) -> str:
+async def condense_query(user_text: str, history: list, model: str ) -> str:
     """Превращает уточняющий вопрос в полноценный поисковый запрос на основе истории."""
     if not history:
         return user_text
