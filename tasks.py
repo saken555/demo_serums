@@ -43,7 +43,13 @@ async def process_ai_message(chat_id: str, user_text: str):
         context_str = "Найденные товары:\n"
         if products:
             for p in products:
-                context_str += f"- {p['name']}: {p['descr']} (Цена: {p['price']})\n"
+                context_str += (
+                     f"ТОВАР: {p['name']}\n"
+                     f"АРТИКУЛ: {p['artikul']}\n"
+                     f"ОПИСАНИЕ: {p['descr']}\n"
+                     f"ЦЕНА: {p['price']}\n"
+                     f"-------------------\n"
+                    )
         else:
             context_str = "Товары по запросу не найдены."
 
